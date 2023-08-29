@@ -65,5 +65,7 @@ class MainActivity : AppCompatActivity() {
         registers.close()
         Toast.makeText(this, output.toString(), Toast.LENGTH_LONG).show()
     }
+
+    fun btStatisticsOnClick(view: View) {}
 }
 

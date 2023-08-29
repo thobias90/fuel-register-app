@@ -1,11 +1,13 @@
 package com.stahlt.fuel_register_app
 
+import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etFuelCode: EditText
@@ -45,4 +47,23 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Element was added successfully. " +
                 "There is $amountOfRegisters registers now", Toast.LENGTH_SHORT).show()
     }
+    fun btSearchOnClick(view: View) {
+//        dataBase.execSQL("DROP TABLE refuel")
+        val registers = dataBase.query("refuel", null, null,
+            null, null, null, null)
+        var output = StringBuilder()
+        while(registers.moveToNext()) {
+            output.append(registers.getInt(0))
+            output.append(" ")
+            output.append(registers.getString(1))
+            output.append(" ")
+            output.append(registers.getString(2))
+            output.append(" ")
+            output.append(registers.getString(3))
+            output.append("\n")
+        }
+        registers.close()
+        Toast.makeText(this, output.toString(), Toast.LENGTH_LONG).show()
+    }
 }
+

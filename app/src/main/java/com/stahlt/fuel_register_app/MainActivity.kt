@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private lateinit var etFuelCode: EditText
@@ -27,6 +28,21 @@ class MainActivity : AppCompatActivity() {
                 "(_id INTEGER PRIMARY KEY AUTOINCREMENT, fuel TEXT, city TEXT, amount TEXT)")
     }
 
-    fun btAddOnClick(view: View) {}
-    fun btSearchOnClick(view: View) {}
+    fun btAddOnClick(view: View) {
+        val register = ContentValues()
+        register.put("fuel", etFuelCode.text.toString())
+        register.put("city", etCity.text.toString())
+        register.put("amount", etFuelAmount.text.toString())
+        dataBase.insert("refuel", null, register)
+
+        val registers = dataBase.query("refuel", null, null,
+            null, null, null, null)
+        var amountOfRegisters = 0
+        while(registers.moveToNext()) {
+            amountOfRegisters += 1
+        }
+        registers.close()
+        Toast.makeText(this, "Element was added successfully. " +
+                "There is $amountOfRegisters registers now", Toast.LENGTH_SHORT).show()
+    }
 }

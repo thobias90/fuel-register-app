@@ -2,7 +2,6 @@ package com.stahlt.fuel_register_app
 
 import android.content.ContentValues
 import android.content.Context
-import android.content.DialogInterface
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         } else if (etFuelAmount.text.isEmpty()) {
             etFuelAmount.error = "Amount must be filled"
         } else {
-            if (VALID_FUELS.contains<Int>(etFuelCode.text.toString().toInt())) {
+            if (VALID_FUELS.contains(etFuelCode.text.toString().toInt())) {
                 dataBase.addRegister(
                     etFuelCode.text.toString(),
                     etCity.text.toString(),
@@ -52,9 +51,9 @@ class MainActivity : AppCompatActivity() {
                 with(builder) {
                     setTitle("Valid Fuel Codes")
                     setMessage("1 - Gas\n2 - Ethanol\n3 - Diesel\n4 - Natural Gas")
-                    setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                    setPositiveButton("OK") { _, _ ->
                         closeContextMenu()
-                    })
+                    }
                     show()
                 }
                 etFuelCode.error = "Fuel Code must be valid"
@@ -66,17 +65,17 @@ class MainActivity : AppCompatActivity() {
         if (etFuelCode.text.isEmpty()) {
             etFuelCode.error = "Fuel Code must be filled"
         } else {
-            if (VALID_FUELS.contains<Int>(etFuelCode.text.toString().toInt())) {
+            if (VALID_FUELS.contains(etFuelCode.text.toString().toInt())) {
                 val amountOfRegisters = dataBase.getRegisterAmount(etFuelCode.text.toString())
-                Toast.makeText(this, "There is $amountOfRegisters registers for ${etFuelCode.text.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "There is $amountOfRegisters registers for ${etFuelCode.text}", Toast.LENGTH_SHORT).show()
             } else {
                 val builder = AlertDialog.Builder(ContextThemeWrapper(this, com.google.android.material.R.style.AlertDialog_AppCompat))
                 with(builder) {
                     setTitle("Valid Fuel Codes")
                     setMessage("1 - Gas\n2 - Ethanol\n3 - Diesel\n4 - Natural Gas")
-                    setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                    setPositiveButton("OK") { _, _ ->
                         closeContextMenu()
-                    })
+                    }
                     show()
                 }
                 etFuelCode.error = "Fuel Code must be valid"
@@ -85,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun btStatisticsOnClick(view: View) {
-        var output = StringBuilder()
+        val output = StringBuilder()
         var amount = dataBase.getAmount(GAS_ID)
         output.append("1-GASOLINE: $amount\n")
         amount = dataBase.getAmount(ETHANOL_ID)
@@ -99,9 +98,9 @@ class MainActivity : AppCompatActivity() {
         with(builder) {
             setTitle("Statistics")
             setMessage(output)
-            setPositiveButton("OK", DialogInterface.OnClickListener{ dialog, id ->
+            setPositiveButton("OK") { _, _ ->
                 closeContextMenu()
-            })
+            }
             show()
         }
     }
@@ -155,6 +154,7 @@ class FuelDatabase(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         while(cursor.moveToNext()) {
             amount += cursor.getInt(0)
         }
+        cursor.close()
         return amount
     }
 

@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Fuel Code"
-        android:inputType="text"
+        android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvFuelCode" />
 
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Amount of fuel"
-        android:inputType="text"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvFuelAmount" />

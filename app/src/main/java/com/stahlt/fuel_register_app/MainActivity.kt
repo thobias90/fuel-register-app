@@ -99,6 +99,9 @@ class MainActivity : AppCompatActivity() {
         with(builder) {
             setTitle("Statistics")
             setMessage(output)
+            setPositiveButton("OK", DialogInterface.OnClickListener{ dialog, id ->
+                closeContextMenu()
+            })
             show()
         }
     }

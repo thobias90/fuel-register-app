@@ -57,23 +57,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     fun btSearchOnClick(view: View) {
-//        dataBase.execSQL("DROP TABLE refuel")
-//        val registers = dataBase.query("refuel", null, null,
-//            null, null, null, null)
-//        var output = StringBuilder()
-//        while(registers.moveToNext()) {
-//            output.append(registers.getInt(0))
-//            output.append(" ")
-//            output.append(registers.getString(1))
-//            output.append(" ")
-//            output.append(registers.getString(2))
-//            output.append(" ")
-//            output.append(registers.getString(3))
-//            output.append("\n")
-//        }
-//        registers.close()
-//        Toast.makeText(this, output.toString(), Toast.LENGTH_LONG).show()
+        if (etFuelCode.text.isEmpty()) {
+            etFuelCode.error = "Fuel Code must be filled"
+        } else {
+            if (VALID_FUELS.contains<Int>(etFuelCode.text.toString().toInt())) {
+                val amountOfRegisters = dataBase.getRegisterAmount(etFuelCode.text.toString())
+                Toast.makeText(this, "There is $amountOfRegisters registers for ${etFuelCode.text.toString()}", Toast.LENGTH_SHORT).show()
+            } else {
+                val builder = AlertDialog.Builder(ContextThemeWrapper(this, com.google.android.material.R.style.AlertDialog_AppCompat))
+                with(builder) {
+                    setTitle("Valid Fuel Codes")
+                    setMessage("1 - Gas\n2 - Ethanol\n3 - Diesel\n4 - Natural Gas")
+                    setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                        closeContextMenu()
+                    })
+                    show()
+                }
+                etFuelCode.error = "Fuel Code must be valid"
+            }
+        }
     }
 
     fun btStatisticsOnClick(view: View) {

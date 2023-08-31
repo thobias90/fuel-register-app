@@ -2,6 +2,7 @@ package com.stahlt.fuel_register_app
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.DialogInterface
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etCity: EditText
     private lateinit var etFuelAmount: EditText
     private lateinit var dataBase: FuelDatabase
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     etFuelCode.text.toString(),
                     etCity.text.toString(),
                     etFuelAmount.text.toString())
-                val amountOfRegisters = dataBase.getRegisterAmount()
+                val amountOfRegisters = dataBase.getRegisterAmount(etFuelCode.text.toString())
                 Toast.makeText(this, "Element was added successfully. " +
                             "There is $amountOfRegisters registers now", Toast.LENGTH_SHORT).show()
             } else {
@@ -52,8 +52,12 @@ class MainActivity : AppCompatActivity() {
                 with(builder) {
                     setTitle("Valid Fuel Codes")
                     setMessage("1 - Gas\n2 - Ethanol\n3 - Diesel\n4 - Natural Gas")
+                    setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
+                        closeContextMenu()
+                    })
                     show()
                 }
+                etFuelCode.error = "Fuel Code must be valid"
             }
         }
     }
@@ -83,13 +87,13 @@ class MainActivity : AppCompatActivity() {
     fun btStatisticsOnClick(view: View) {
         var output = StringBuilder()
         var amount = dataBase.getAmount(GAS_ID)
-        output.append("GASOLINE: $amount\n")
+        output.append("1-GASOLINE: $amount\n")
         amount = dataBase.getAmount(ETHANOL_ID)
-        output.append("ETHANOL: $amount\n")
+        output.append("2-ETHANOL: $amount\n")
         amount = dataBase.getAmount(DIESEL_ID)
-        output.append("DIESEL: $amount\n")
+        output.append("3-DIESEL: $amount\n")
         amount = dataBase.getAmount(NATURAL_GAS_ID)
-        output.append("NATURAL GAS: $amount\n")
+        output.append("4-NATURAL GAS: $amount\n")
 
         val builder = AlertDialog.Builder(ContextThemeWrapper(this, com.google.android.material.R.style.AlertDialog_AppCompat))
         with(builder) {
@@ -97,7 +101,6 @@ class MainActivity : AppCompatActivity() {
             setMessage(output)
             show()
         }
-//        Toast.makeText(this, output.toString(), Toast.LENGTH_LONG).show()
     }
 
     companion object {
@@ -131,9 +134,9 @@ class FuelDatabase(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         db.close()
     }
 
-    fun getRegisterAmount(): Int {
+    fun getRegisterAmount(fuel: String): Int {
         val db = this.readableDatabase
-        val query = "SELECT _id FROM $TABLE_NAME;"
+        val query = "SELECT _id FROM $TABLE_NAME WHERE $KEY_FUEL=$fuel;"
         val cursor = db.rawQuery(query, null)
         val registerAmount = cursor.count
         cursor.close()
@@ -143,8 +146,6 @@ class FuelDatabase(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
 
     fun getAmount(fuel: Int): Int {
         val db = this.readableDatabase
-//        val cursor = db.query(TABLE_NAME, null, "fuel=$fuel",
-//            null, null, null, null)
         val query = "SELECT $KEY_AMOUNT FROM $TABLE_NAME WHERE $KEY_FUEL=$fuel"
         val cursor = db.rawQuery(query, null)
         var amount = 0
@@ -164,4 +165,3 @@ class FuelDatabase(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         const val KEY_AMOUNT = "amount"
     }
 }
-
